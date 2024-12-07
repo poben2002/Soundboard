@@ -30,23 +30,21 @@ async def play(ctx, sound: str):
     if not ctx.author.voice:
         await ctx.send("Please join a voice channel first!")
         return
-
     channel = ctx.author.voice.channel
-    #if not bot.voice_clients:
-    #    vc = await channel.connect()
-    #else:
-    #    vc = bot.voice_clients[0]
+
+    if ctx.voice_client is None or ctx.voice_client.channel != channel:
+        if ctx.voice_client:
+            await ctx.voice_client.disconnect()
+        vc = await channel.connect()
+        voice_clients[channel.id] = vc
+        await ctx.send(f"Connected to {channel.name}.")
+    else:
+        vc = ctx.voice_client
 
     sound_file = f"./sounds/{sound}.mp3"
     if not os.path.exists(sound_file):
         await ctx.send(f"Sound '{sound}' not found!")
         return
-
-    if channel.id not in voice_clients:
-        vc = await channel.connect()
-        voice_clients[channel.id] = vc
-    else:
-        vc = voice_clients[channel.id]
 
     vc.play(FFmpegPCMAudio(sound_file), after=lambda e: print(f"Finished playing: {sound_file}"))
     await ctx.send(f"Playing: {sound}")
@@ -81,6 +79,18 @@ async def addsound(ctx):
     await attachment.save(save_path)
     await ctx.send(f"Sound '{filename}' added successfully!")
 
+@bot.command(name='connect')
+async def connect(ctx):
+    if ctx.author.voice:
+        channel = ctx.author.voice.channel
+        if ctx.voice_client:
+            await ctx.send(f"Already connected to {ctx.voice_client.channel.name}.")
+            await ctx.voice_client.disconnect()
+            return
+        await channel.connect()
+        await ctx.send(f"Connected to {channel.name}.")
+    else:
+        await ctx.send("You need to join a voice channel first.")
 #Bot ready event
 @bot.event
 async def on_ready():

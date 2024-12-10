@@ -12,7 +12,8 @@ ytdl_format_options = {
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'noplaylist':True
+    'noplaylist':True,
+    'cookies': '/home/opc/Soundboard/',
 }
 
 ytdl = yt_dlp.YoutubeDL(ytdl_format_options)

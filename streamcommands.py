@@ -13,7 +13,8 @@ ytdl_format_options = {
         'preferredquality': '192',
     }],
     'noplaylist':True,
-    'cookies': '/home/opc/Soundboard/cookies.json',
+    'cookies': '/home/opc/Soundboard/cookies.txt',
+    'verbose': True
 }
 
 ytdl = yt_dlp.YoutubeDL(ytdl_format_options)

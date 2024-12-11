@@ -4,6 +4,7 @@ from discord import FFmpegPCMAudio
 import yt_dlp
 import asyncio
 from collections import deque
+import os
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -12,8 +13,8 @@ ytdl_format_options = {
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'noplaylist':True,
-    'cookies': '/home/opc/Soundboard/cookies.txt',
+    'noplaylist': True,
+    'cookies': '/home/opc/Soundboard/cookies.txt',  # Make sure this path is correct
     'verbose': True
 }
 
@@ -56,6 +57,8 @@ async def stream(ctx, *, query: str):
         vc = ctx.voice_client
     try:
         await ctx.send(f"Searching for: {query}")
+
+        # Ensure the query is either a YouTube link or search term
         if not ("youtube.com" in query or "youtu.be" in query or "https:" in query):
             search_opts = {
                 'format': 'bestaudio/best',
@@ -88,8 +91,8 @@ async def stream(ctx, *, query: str):
             del voice_clients[channel.id]
 
     except Exception as e:
-        await ctx.send("An error occured :(")
-        print(f"Error:{e}")
+        await ctx.send("An error occurred while searching or streaming.")
+        print(f"Error: {e}")
 
 @commands.command(name='skip')
 async def skip(ctx):
